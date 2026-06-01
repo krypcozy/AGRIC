@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SmartFarm Repository</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --green:#a6ff14;
+    --green-dim:#7acc0e;
+    --dark:#0a0c09;
+    --dark2:#111510;
+    --dark3:#181e14;
+    --border:#2a3322;
+    --text:#e8f0e0;
+    --muted:#6b7a5e;
+    --danger:#ff4b4b;
+    --amber:#ffb84b;
+    --blue:#4b9eff;
+  }
+  html,body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-track{background:var(--dark)}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+  /* ── NAV ── */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:62px;background:var(--dark2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:3px;color:var(--green);cursor:pointer}
+  .logo span{color:var(--text)}
+  .nav-links{display:flex;gap:2.5rem}
+  .nav-links a{font-size:12px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:color .2s;padding:4px 0;border-bottom:2px solid transparent}
+  .nav-links a:hover,.nav-links a.active{color:var(--green);border-bottom-color:var(--green)}
+  .nav-right{display:flex;align-items:center;gap:.75rem}
+  .badge-beta{background:var(--green);color:var(--dark);font-size:10px;font-weight:700;padding:2px 8px;border-radius:2px;font-family:'Space Mono',monospace;letter-spacing:1px}
+  .btn{background:transparent;border:1px solid var(--border);color:var(--text);padding:7px 18px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;border-radius:2px}
+  .btn:hover{border-color:var(--green);color:var(--green)}
+  .btn.primary{background:var(--green);color:var(--dark);border-color:var(--green);font-weight:600}
+  .btn.primary:hover{background:var(--green-dim)}
+  .btn.danger{background:transparent;border-color:var(--danger);color:var(--danger)}
+  .btn.danger:hover{background:rgba(255,75,75,.1)}
+  .btn.sm{padding:4px 12px;font-size:12px}
+
+  /* ── PAGES ── */
+  .page{display:none;animation:fadeIn .3s ease}
+  .page.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ── HERO ── */
+  #home{padding:0}
+  .hero{min-height:calc(100vh - 62px);display:flex;flex-direction:column;justify-content:center;padding:4rem 3rem;position:relative;overflow:hidden}
+  .hero-grid{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 40px,var(--border) 40px,var(--border) 40.5px),repeating-linear-gradient(90deg,transparent,transparent 40px,var(--border) 40px,var(--border) 40.5px);opacity:.25}
+  .hero-tag{font-family:'Space Mono',monospace;font-size:11px;color:var(--green);letter-spacing:3px;text-transform:uppercase;margin-bottom:1.5rem;position:relative}
+  .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,8vw,7.5rem);line-height:.92;letter-spacing:2px;position:relative;margin-bottom:1.5rem}
+  .hero h1 span{color:var(--green)}
+  .hero-desc{font-size:1.05rem;color:var(--muted);max-width:520px;line-height:1.75;position:relative;margin-bottom:2.5rem}
+  .hero-btns{display:flex;gap:1rem;position:relative;flex-wrap:wrap}
+  .btn-lg{padding:13px 36px;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:.5px;font-family:'DM Sans',sans-serif;transition:all .2s;border:none;border-radius:2px}
+  .btn-lg.green{background:var(--green);color:var(--dark)}
+  .btn-lg.green:hover{background:var(--green-dim);transform:translateY(-2px)}
+  .btn-lg.outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+  .btn-lg.outline:hover{border-color:var(--green);color:var(--green)}
+  .hero-stats{display:flex;gap:3.5rem;margin-top:5rem;position:relative;flex-wrap:wrap}
+  .hero-stat .num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--green);line-height:1}
+  .hero-stat .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+
+  /* ── FEATURES SECTION ── */
+  .features{padding:5rem 3rem;background:var(--dark3);border-top:1px solid var(--border)}
+  .features h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:2px;text-align:center;margin-bottom:.5rem}
+  .features h2 span{color:var(--green)}
+  .features-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:3rem}
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;max-width:1100px;margin:0 auto}
+  .feat-card{background:var(--dark2);border:1px solid var(--border);padding:1.75rem;border-left:3px solid var(--green);transition:transform .2s}
+  .feat-card:hover{transform:translateY(-3px)}
+  .feat-icon{font-size:1.8rem;margin-bottom:1rem}
+  .feat-card h3{font-size:15px;font-weight:600;margin-bottom:.5rem;letter-spacing:.5px}
+  .feat-card p{font-size:13px;color:var(--muted);line-height:1.6}
+
+  /* ── PAGE CONTENT ── */
+  .page-inner{padding:2.5rem 3rem;max-width:1300px}
+
+  /* ── SECTION HEADER ── */
+  .sec-hdr{margin-bottom:2rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+  .sec-hdr-left h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px}
+  .sec-hdr-left h2 span{color:var(--green)}
+  .sec-hdr-left p{color:var(--muted);font-size:13px;margin-top:4px}
+
+  /* ── TICKER ── */
+  .ticker{background:var(--dark3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;height:34px;display:flex;align-items:center}
+  .ticker-track{display:flex;gap:3rem;animation:tick 25s linear infinite;white-space:nowrap;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)}
+  .ticker-track .hi{color:var(--green)}
+  @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ── STAT CARDS ── */
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+  .stat-card{background:var(--dark2);border:1px solid var(--border);padding:1.25rem;position:relative;overflow:hidden}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+  .stat-card.green::before{background:var(--green)}
+  .stat-card.amber::before{background:var(--amber)}
+  .stat-card.blue::before{background:var(--blue)}
+  .stat-card.red::before{background:var(--danger)}
+  .s-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem}
+  .s-val{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;line-height:1}
+  .s-sub{font-size:12px;color:var(--green);margin-top:6px}
+  .stat-card.amber .s-sub{color:var(--amber)}
+  .stat-card.blue .s-sub{color:var(--blue)}
+  .stat-card.red .s-sub{color:var(--danger)}
+  .mini-bars{display:flex;align-items:flex-end;gap:3px;height:40px;margin-top:10px}
+  .bar{flex:1;border-radius:1px;opacity:.7;transition:opacity .2s;min-width:5px;background:var(--green)}
+  .bar:hover{opacity:1}
+
+  /* ── TABLES ── */
+  .tbl-wrap{background:var(--dark2);border:1px solid var(--border);overflow:hidden;margin-bottom:2rem}
+  .tbl-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid var(--border)}
+  .tbl-head h3{font-size:13px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+  .tbl-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:.7rem 1.25rem;border-bottom:1px solid var(--border);font-weight:400;white-space:nowrap}
+  td{padding:.75rem 1.25rem;font-size:13px;border-bottom:1px solid var(--border)}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(166,255,20,.02)}
+  .mono{font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)}
+  .pill{display:inline-block;padding:2px 10px;font-size:11px;font-family:'Space Mono',monospace;border-radius:2px;letter-spacing:.5px}
+  .pill.active{background:rgba(166,255,20,.12);color:var(--green)}
+  .pill.pending{background:rgba(255,184,75,.1);color:var(--amber)}
+  .pill.inactive,.pill.failed{background:rgba(255,75,75,.1);color:var(--danger)}
+  .pill.postgres{background:rgba(75,158,255,.1);color:var(--blue)}
+  .pill.mongodb{background:rgba(166,255,20,.1);color:var(--green)}
+
+  /* ── FORMS ── */
+  .form-card{background:var(--dark2);border:1px solid var(--border);padding:2rem;max-width:700px}
+  .form-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;margin-bottom:.25rem}
+  .form-sub{font-size:13px;color:var(--muted);margin-bottom:2rem}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+  .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
+  .form-group label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .form-group input,.form-group select,.form-group textarea{
+    background:var(--dark);border:1px solid var(--border);color:var(--text);
+    padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;
+    outline:none;transition:border-color .2s;border-radius:2px
+  }
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green)}
+  .form-group select option{background:var(--dark2)}
+  .form-group textarea{resize:vertical;min-height:90px}
+  .form-hint{font-size:11px;color:var(--muted);margin-top:3px}
+  .submit-btn{background:var(--green);color:var(--dark);border:none;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:1px;font-family:'DM Sans',sans-serif;text-transform:uppercase;transition:all .2s;border-radius:2px;display:inline-flex;align-items:center;gap:8px}
+  .submit-btn:hover{background:var(--green-dim);transform:translateY(-1px)}
+  .submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+  /* ── AUTH WALL ── */
+  .auth-wall{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);padding:2rem}
+  .auth-box{background:var(--dark2);border:1px solid var(--border);padding:2.5rem;width:100%;max-width:440px}
+  .auth-box h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;margin-bottom:.25rem}
+  .auth-box p{font-size:13px;color:var(--muted);margin-bottom:2rem}
+  .auth-toggle{font-size:13px;color:var(--muted);margin-top:1.5rem;text-align:center}
+  .auth-toggle span{color:var(--green);cursor:pointer;font-weight:600}
+  .auth-toggle span:hover{text-decoration:underline}
+
+  /* ── UPLOAD ZONE ── */
+  .upload-zone{border:1px dashed var(--border);padding:3rem 2rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--dark);margin-bottom:1rem;border-radius:2px}
+  .upload-zone:hover,.upload-zone.drag{border-color:var(--green);background:rgba(166,255,20,.03)}
+  .uz-icon{font-size:2.5rem;margin-bottom:.75rem}
+  .upload-zone p{font-size:13px;color:var(--muted)}
+  .upload-zone span{color:var(--green);font-weight:600}
+  .file-selected{background:rgba(166,255,20,.08);border:1px solid var(--green);padding:.75rem 1rem;font-size:13px;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between}
+
+  /* ── MAP AREA ── */
+  .geo-grid{display:grid;grid-template-columns:1fr 300px;gap:1.5rem}
+  .map-box{background:var(--dark2);border:1px solid var(--border);height:400px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .map-overlay{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 30px,rgba(42,51,34,.4) 30px,rgba(42,51,34,.4) 30.5px),repeating-linear-gradient(90deg,transparent,transparent 30px,rgba(42,51,34,.4) 30px,rgba(42,51,34,.4) 30.5px)}
+  .map-dot{position:absolute;cursor:pointer}
+  .map-dot .dot{width:10px;height:10px;background:var(--green);border-radius:50%;position:relative;z-index:1}
+  .map-dot .pulse{position:absolute;inset:-6px;border-radius:50%;background:var(--green);opacity:.2;animation:mpulse 2s infinite}
+  @keyframes mpulse{0%{transform:scale(1);opacity:.2}100%{transform:scale(2.5);opacity:0}}
+  .map-dot .dot-label{position:absolute;left:16px;top:-4px;font-size:10px;font-family:'Space Mono',monospace;white-space:nowrap;color:var(--green);opacity:0;transition:opacity .2s}
+  .map-dot:hover .dot-label{opacity:1}
+  .map-caption{position:relative;z-index:2;text-align:center;pointer-events:none}
+  .map-caption h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;color:var(--muted)}
+  .map-caption p{font-size:11px;color:var(--muted);margin-top:4px;font-family:'Space Mono',monospace}
+  .farm-panel{display:flex;flex-direction:column;gap:.75rem;max-height:400px;overflow-y:auto}
+  .farm-item{background:var(--dark2);border:1px solid var(--border);padding:1rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+  .farm-item:hover,.farm-item.active{border-left-color:var(--green);background:rgba(166,255,20,.03)}
+  .fi-name{font-size:13px;font-weight:500}
+  .fi-loc{font-size:11px;color:var(--muted);margin-top:2px}
+  .fi-meta{display:flex;align-items:center;gap:.5rem;margin-top:.5rem;flex-wrap:wrap}
+
+  /* ── TOAST ── */
+  #toast{position:fixed;bottom:2rem;right:2rem;padding:12px 20px;font-size:13px;font-weight:700;font-family:'Space Mono',monospace;transform:translateY(120%);opacity:0;transition:all .3s;z-index:9999;border-radius:2px;max-width:360px}
+  #toast.show{transform:translateY(0);opacity:1}
+  #toast.success{background:var(--green);color:var(--dark)}
+  #toast.error{background:var(--danger);color:#fff}
+  #toast.info{background:var(--dark2);color:var(--text);border:1px solid var(--border)}
+
+  /* ── LOADING SPINNER ── */
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(10,12,9,.3);border-top-color:var(--dark);border-radius:50%;animation:spin .6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── API STATUS ── */
+  .api-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+  .api-dot.online{background:var(--green)}
+  .api-dot.offline{background:var(--danger)}
+
+  /* ── ANALYTICS CARDS ── */
+  .analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:2rem}
+  .analytic-card{background:var(--dark2);border:1px solid var(--border);padding:1.5rem}
+  .analytic-card h4{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:1rem}
+  .data-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:13px}
+  .data-row:last-child{border-bottom:none}
+  .data-row .key{color:var(--muted)}
+  .data-row .val{font-weight:500;font-family:'Space Mono',monospace;font-size:12px}
+
+  /* ── USER MENU ── */
+  .user-chip{display:flex;align-items:center;gap:.5rem;cursor:pointer;padding:4px 10px;border:1px solid var(--border);border-radius:2px;transition:border-color .2s}
+  .user-chip:hover{border-color:var(--green)}
+  .user-chip .uc-name{font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .user-chip .uc-dot{width:8px;height:8px;background:var(--green);border-radius:50%;flex-shrink:0}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    .stat-grid{grid-template-columns:1fr 1fr}
+    .geo-grid{grid-template-columns:1fr}
+    .map-box{height:280px}
+    .farm-panel{max-height:none}
+    .nav-links{display:none}
+    .hero h1{font-size:3rem}
+    .form-row{grid-template-columns:1fr}
+    .page-inner{padding:1.5rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="logo" onclick="go('home')">Smart<span>Farm</span></div>
+  <div class="nav-links" id="navLinks">
+    <a onclick="go('home')" data-page="home" class="active">Home</a>
+    <a onclick="go('dashboard')" data-page="dashboard">Dashboard</a>
+    <a onclick="go('farms')" data-page="farms">Farms</a>
+    <a onclick="go('upload')" data-page="upload">Upload Data</a>
+    <a onclick="go('analytics')" data-page="analytics">Analytics</a>
+  </div>
+  <div class="nav-right" id="navRight">
+    <span class="badge-beta">BETA</span>
+    <span id="apiStatus" title="API connection status"></span>
+    <button class="btn" onclick="go('auth')">Sign In</button>
+    <button class="btn primary" onclick="go('auth')">Register</button>
+  </div>
+</nav>
+
+<!-- ── HOME ─────────────────────────────────────────────────────────────── -->
+<div id="home" class="page active" style="padding:0">
+  <div class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-tag">// Polyglot Persistence · Big Data · Agriculture</div>
+    <h1>THE UNIVERSAL<br><span>FARM DATA</span><br>REPOSITORY</h1>
+    <p class="hero-desc">A multi-farm, single sign-on platform built on a collocation big data model. Structured (PostgreSQL) + Unstructured (MongoDB) agricultural data — managed together, accessed by all stakeholders.</p>
+    <div class="hero-btns">
+      <button class="btn-lg green" onclick="go('auth')">Register Your Farm</button>
+      <button class="btn-lg outline" onclick="go('dashboard')">View Dashboard</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num" id="hsFarms">—</div><div class="lbl">Farms Registered</div></div>
+      <div class="hero-stat"><div class="num" id="hsData">18TB</div><div class="lbl">Data Collected</div></div>
+      <div class="hero-stat"><div class="num">2</div><div class="lbl">Database Tiers</div></div>
+      <div class="hero-stat"><div class="num">7</div><div class="lbl">Stakeholder Types</div></div>
+    </div>
+  </div>
+
+  <div class="features">
+    <h2>WHY <span>POLYGLOT</span> PERSISTENCE?</h2>
+    <p class="features-sub">A one-size-fits-all DBMS is no longer sufficient for modern agricultural data management</p>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🗄️</div>
+        <h3>Structured Data → PostgreSQL</h3>
+        <p>Crop yield records, financial transactions, farm registry, and audit logs stored in relational tables with strict schema enforcement.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🍃</div>
+        <h3>Unstructured Data → MongoDB</h3>
+        <p>Soil sensor readings, weather data, satellite imagery metadata, and activity logs stored with flexible, schema-free documents.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔑</div>
+        <h3>Single Sign-On</h3>
+        <p>One account manages multiple farm units. All stakeholders — farmers, government, banks, researchers — share a universal access framework.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌍</div>
+        <h3>Geographical Enclaves</h3>
+        <p>Data aggregated by state, LGA, and region. Policy makers and financial institutions query across all farms in a defined zone.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── AUTH ──────────────────────────────────────────────────────────────── -->
+<div id="auth" class="page">
+  <div class="auth-wall">
+    <div class="auth-box" id="authBox">
+      <h2 id="authTitle">SIGN IN</h2>
+      <p id="authSub">Access the SmartFarm universal repository</p>
+      <div id="authForm"></div>
+      <p class="auth-toggle" id="authToggle"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ─────────────────────────────────────────────────────────── -->
+<div id="dashboard" class="page">
+  <div class="ticker">
+    <div class="ticker-track">
+      <span class="hi">MAIZE</span>&nbsp;₦320/kg &nbsp;·&nbsp; <span class="hi">CASSAVA</span>&nbsp;₦180/kg &nbsp;·&nbsp; <span class="hi">YAM</span>&nbsp;₦450/kg &nbsp;·&nbsp; <span class="hi">SORGHUM</span>&nbsp;₦290/kg &nbsp;·&nbsp; <span class="hi">RICE</span>&nbsp;₦680/kg &nbsp;·&nbsp; <span class="hi">TOMATO</span>&nbsp;₦520/kg &nbsp;·&nbsp; <span class="hi">COCOA</span>&nbsp;₦1,200/kg &nbsp;·&nbsp; <span class="hi">PALM OIL</span>&nbsp;₦950/kg &nbsp;·&nbsp;
+      <span class="hi">MAIZE</span>&nbsp;₦320/kg &nbsp;·&nbsp; <span class="hi">CASSAVA</span>&nbsp;₦180/kg &nbsp;·&nbsp; <span class="hi">YAM</span>&nbsp;₦450/kg &nbsp;·&nbsp; <span class="hi">SORGHUM</span>&nbsp;₦290/kg &nbsp;·&nbsp; <span class="hi">RICE</span>&nbsp;₦680/kg &nbsp;·&nbsp; <span class="hi">TOMATO</span>&nbsp;₦520/kg &nbsp;·&nbsp; <span class="hi">COCOA</span>&nbsp;₦1,200/kg &nbsp;·&nbsp; <span class="hi">PALM OIL</span>&nbsp;₦950/kg &nbsp;·&nbsp;
+    </div>
+  </div>
+  <div class="page-inner">
+    <div class="sec-hdr">
+      <div class="sec-hdr-left">
+        <h2>SYSTEM <span>DASHBOARD</span></h2>
+        <p>Real-time overview · polyglot data across all registered farms</p>
+      </div>
+      <button class="btn sm" onclick="loadDashboard()">↺ Refresh</button>
+    </div>
+    <div class="stat-grid" id="statGrid">
+      <div class="stat-card green"><div class="s-lbl">Total Farms</div><div class="s-val" id="dFarms">—</div><div class="s-sub">loading...</div><div class="mini-bars" id="bFarms"></div></div>
+      <div class="stat-card amber"><div class="s-lbl">Active Uploads</div><div class="s-val" id="dUploads">—</div><div class="s-sub" style="color:var(--amber)">across both DB tiers</div><div class="mini-bars" id="bUploads"></div></div>
+      <div class="stat-card blue"><div class="s-lbl">PostgreSQL Records</div><div class="s-val" id="dPG">—</div><div class="s-sub" style="color:var(--blue)">structured tier</div></div>
+      <div class="stat-card red"><div class="s-lbl">MongoDB Documents</div><div class="s-val" id="dMongo">—</div><div class="s-sub" style="color:var(--danger)">unstructured tier</div></div>
+    </div>
+    <div class="tbl-wrap">
+      <div class="tbl-head"><h3>My Farms</h3><button class="btn sm" onclick="go('farms')">View All →</button></div>
+      <div class="tbl-scroll"><table id="dashFarmsTable"><thead><tr><th>Farm Code</th><th>Name</th><th>Location</th><th>Crop</th><th>Size (ha)</th><th>Status</th></tr></thead><tbody id="dashFarmsBody"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Sign in to view your farms</td></tr></tbody></table></div>
+    </div>
+    <div class="tbl-wrap">
+      <div class="tbl-head"><h3>Recent Upload Log</h3></div>
+      <div class="tbl-scroll"><table><thead><tr><th>Farm</th><th>Category</th><th>DB Tier</th><th>File</th><th>Status</th><th>Time</th></tr></thead><tbody id="uploadLogBody"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">No uploads yet</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FARMS ──────────────────────────────────────────────────────────────── -->
+<div id="farms" class="page">
+  <div class="page-inner">
+    <div class="sec-hdr">
+      <div class="sec-hdr-left">
+        <h2>FARM <span>REGISTRY</span></h2>
+        <p>All registered farms across Nigeria · click a farm for details</p>
+      </div>
+      <button class="btn primary sm" onclick="go('register-farm')">+ Register Farm</button>
+    </div>
+    <div class="geo-grid">
+      <div class="map-box" id="mapBox">
+        <div class="map-overlay"></div>
+        <div id="mapDots"></div>
+        <div class="map-caption">
+          <h3>NIGERIA — FARM DISTRIBUTION</h3>
+          <p id="mapCount">Loading farm nodes...</p>
+        </div>
+      </div>
+      <div class="farm-panel" id="farmPanel">
+        <div style="color:var(--muted);font-size:13px;padding:.5rem">Loading farms...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── REGISTER FARM ──────────────────────────────────────────────────────── -->
+<div id="register-farm" class="page">
+  <div class="page-inner">
+    <div class="sec-hdr">
+      <div class="sec-hdr-left">
+        <h2>REGISTER <span>FARM</span></h2>
+        <p>Add a new farm unit to your SSO account</p>
+      </div>
+    </div>
+    <div class="form-card">
+      <div class="form-title">Farm Details</div>
+      <div class="form-sub">Your farm will be assigned a unique Farm Code (e.g. FRM-0041)</div>
+      <div class="form-row">
+        <div class="form-group" style="margin:0">
+          <label>Farm Name *</label>
+          <input type="text" id="rfName" placeholder="e.g. Oluwaseun Farms"/>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>State / Enclave</label>
+          <select id="rfEnclave">
+            <option value="">Select state...</option>
+            <option value="1">Edo State</option>
+            <option value="2">Kano State</option>
+            <option value="3">Delta State</option>
+            <option value="4">Plateau State</option>
+            <option value="5">Ogun State</option>
+            <option value="6">Benue State</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin:0">
+          <label>LGA</label>
+          <input type="text" id="rfLga" placeholder="Local Government Area"/>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Primary Crop</label>
+          <select id="rfCrop">
+            <option value="">Select crop...</option>
+            <option>Maize</option><option>Cassava</option><option>Yam</option>
+            <option>Rice</option><option>Sorghum</option><option>Millet</option>
+            <option>Vegetables</option><option>Tomato</option><option>Cocoa</option>
+            <option>Palm Oil</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin:0">
+          <label>Farm Size (Hectares)</label>
+          <input type="number" id="rfSize" placeholder="e.g. 12.5" step="0.1" min="0"/>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Address</label>
+          <input type="text" id="rfAddress" placeholder="Farm address / coordinates"/>
+        </div>
+      </div>
+      <button class="submit-btn" id="rfBtn" onclick="submitRegisterFarm()">Register Farm ↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── UPLOAD DATA ─────────────────────────────────────────────────────────── -->
+<div id="upload" class="page">
+  <div class="page-inner">
+    <div class="sec-hdr">
+      <div class="sec-hdr-left">
+        <h2>UPLOAD <span>DATA</span></h2>
+        <p>The polyglot router sends your data to the correct database tier automatically</p>
+      </div>
+    </div>
+    <div style="max-width:700px">
+      <div class="form-card" style="margin-bottom:1.5rem">
+        <div class="form-title">Select Farm & Category</div>
+        <div class="form-sub">Data category determines which database stores your data</div>
+        <div class="form-row">
+          <div class="form-group" style="margin:0">
+            <label>Farm</label>
+            <select id="ulFarm"><option value="">Select farm...</option></select>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>Data Category</label>
+            <select id="ulCategory" onchange="updateDbTierBadge()">
+              <option value="">Select category...</option>
+              <optgroup label="→ PostgreSQL (Structured)">
+                <option value="crop_yield">Crop Yield Records</option>
+                <option value="financial">Financial Records</option>
+              </optgroup>
+              <optgroup label="→ MongoDB (Unstructured)">
+                <option value="soil_sensor">Soil Sensor Logs</option>
+                <option value="weather">Weather / Climate Data</option>
+                <option value="satellite">Satellite Imagery</option>
+                <option value="drone_imagery">Drone Imagery</option>
+                <option value="farm_activity">Farm Activity Log</option>
+                <option value="raw_file">Raw File Upload</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+        <div id="tierBadge" style="display:none;margin-top:.5rem;font-size:12px;font-family:'Space Mono',monospace;padding:.5rem .75rem;border-radius:2px"></div>
+      </div>
+
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleDrop(event)">
+        <div class="uz-icon">⬆</div>
+        <p><span>Click to browse</span> or drag & drop</p>
+        <p style="margin-top:6px;font-size:11px;color:var(--muted)">CSV, JSON, XML, TIFF, PDF, JPEG — max 5GB</p>
+      </div>
+      <input type="file" id="fileInput" style="display:none" onchange="handleFileSelect(this)"/>
+      <div id="fileSelectedBox" style="display:none"></div>
+
+      <div class="form-card">
+        <div class="form-title">Metadata</div>
+        <div class="form-sub">Context for indexing and stakeholder access</div>
+        <div class="form-row">
+          <div class="form-group" style="margin:0">
+            <label>Season / Period</label>
+            <input type="text" id="ulSeason" placeholder="e.g. Wet Season 2025"/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>JSON Data (optional)</label>
+            <input type="text" id="ulData" placeholder='{"crop_name":"Cassava","yield_kg":1200}'/>
+            <span class="form-hint">For structured inserts without a file</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="ulNotes" placeholder="Describe the data, collection method, anomalies..."></textarea>
+        </div>
+        <button class="submit-btn" id="ulBtn" onclick="submitUpload()">Submit to Repository ↗</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ANALYTICS ──────────────────────────────────────────────────────────── -->
+<div id="analytics" class="page">
+  <div class="page-inner">
+    <div class="sec-hdr">
+      <div class="sec-hdr-left">
+        <h2>STAKEHOLDER <span>ANALYTICS</span></h2>
+        <p>Aggregated data across farms · for government, banks, researchers, marketers</p>
+      </div>
+    </div>
+    <div class="form-card" style="margin-bottom:2rem;padding:1.25rem">
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+        <div class="form-group" style="margin:0;flex:1;min-width:180px">
+          <label>Query Type</label>
+          <select id="analyticsType" onchange="renderAnalyticsForm()">
+            <option value="national">National Overview</option>
+            <option value="enclave">By State / Enclave</option>
+            <option value="farm">By Farm</option>
+          </select>
+        </div>
+        <div id="analyticsParamBox" style="flex:1;min-width:180px"></div>
+        <button class="btn primary" onclick="runAnalytics()">Run Query →</button>
+      </div>
+    </div>
+    <div id="analyticsResult"></div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+const API = 'http://localhost:5000/api';
+let token = localStorage.getItem('sf_token') || null;
+let currentUser = JSON.parse(localStorage.getItem('sf_user') || 'null');
+let myFarms = [];
+let selectedFile = null;
+let authMode = 'login';
+
+// ── UTILS ──────────────────────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const toast = (msg, type='success') => {
+  const t = $('toast');
+  t.textContent = (type==='success'?'✓ ':type==='error'?'✗ ':'ℹ ') + msg;
+  t.className = `show ${type}`;
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.className='', 3200);
+};
+
+const apiFetch = async (path, opts={}) => {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers||{}) };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(API + path, { ...opts, headers });
+  const json = await res.json().catch(()=>({success:false,message:'Invalid response'}));
+  if (!res.ok) throw new Error(json.message || 'Request failed');
+  return json;
+};
+
+const apiFetchForm = async (path, formData) => {
+  const headers = {};
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(API + path, { method:'POST', headers, body: formData });
+  const json = await res.json().catch(()=>({success:false,message:'Invalid response'}));
+  if (!res.ok) throw new Error(json.message || 'Request failed');
+  return json;
+};
+
+const miniBarHtml = (values, color='var(--green)') =>
+  values.map(h=>`<div class="bar" style="height:${h}%;background:${color}"></div>`).join('');
+
+const rndBars = (n=10) => Array.from({length:n},(_,i)=>Math.round(10+80*(i/n)+Math.random()*15));
+
+const timeAgo = ts => {
+  const d = (Date.now()-new Date(ts).getTime())/1000;
+  if(d<60) return 'just now';
+  if(d<3600) return Math.round(d/60)+'m ago';
+  if(d<86400) return Math.round(d/3600)+'h ago';
+  return Math.round(d/86400)+'d ago';
+};
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+function go(page) {
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  const el = $(page);
+  if (!el) return;
+  el.style.display = 'block';
+  el.classList.remove('active');
+  void el.offsetWidth;
+  el.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>{
+    a.classList.toggle('active', a.dataset.page === page);
+  });
+  window.scrollTo(0,0);
+  // Lazy load
+  if (page==='dashboard') loadDashboard();
+  if (page==='farms') loadFarms();
+  if (page==='upload') loadUploadFarmSelect();
+  if (page==='auth') renderAuthForm();
+  if (page==='analytics') renderAnalyticsForm();
+}
+
+// ── AUTH UI ────────────────────────────────────────────────────────────────
+function renderAuthForm() {
+  if (currentUser) { renderUserNav(); go('dashboard'); return; }
+  authMode = authMode || 'login';
+  const isReg = authMode==='register';
+  $('authTitle').textContent = isReg ? 'REGISTER' : 'SIGN IN';
+  $('authSub').textContent = isReg
+    ? 'Create your universal SSO account'
+    : 'Access the SmartFarm repository';
+  $('authForm').innerHTML = `
+    ${isReg?`<div class="form-group"><label>Full Name</label><input id="aName" type="text" placeholder="Your full name"/></div>`:''}
+    ${isReg?`<div class="form-group"><label>Phone</label><input id="aPhone" type="tel" placeholder="+234..."/></div>`:''}
+    ${isReg?`<div class="form-group"><label>Stakeholder Type</label><select id="aType"><option value="1">Farm Owner / Operator</option><option value="2">Government Agency</option><option value="3">Financial Institution</option><option value="4">Agricultural Technology Co.</option><option value="5">Marketer / Aggregator</option><option value="6">Research Institution</option><option value="7">Consumer</option></select></div>`:''}
+    <div class="form-group"><label>Email</label><input id="aEmail" type="email" placeholder="your@email.com"/></div>
+    <div class="form-group"><label>Password</label><input id="aPass" type="password" placeholder="••••••••"/></div>
+    <button class="submit-btn" style="width:100%;justify-content:center" id="aBtn" onclick="submitAuth()">
+      ${isReg?'Create Account ↗':'Sign In ↗'}
+    </button>`;
+  $('authToggle').innerHTML = isReg
+    ? `Already have an account? <span onclick="authMode='login';renderAuthForm()">Sign in</span>`
+    : `No account? <span onclick="authMode='register';renderAuthForm()">Register here</span>`;
+}
+
+async function submitAuth() {
+  const btn = $('aBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner"></div>`;
+  try {
+    if (authMode==='register') {
+      const data = await apiFetch('/auth/register', {
+        method:'POST',
+        body: JSON.stringify({
+          full_name: $('aName').value.trim(),
+          email: $('aEmail').value.trim(),
+          password: $('aPass').value,
+          phone: $('aPhone').value.trim(),
+          stakeholder_type_id: parseInt($('aType').value),
+        })
+      });
+      token = data.token;
+      currentUser = data.user;
+    } else {
+      const data = await apiFetch('/auth/login', {
+        method:'POST',
+        body: JSON.stringify({ email: $('aEmail').value.trim(), password: $('aPass').value })
+      });
+      token = data.token;
+      currentUser = data.user;
+    }
+    localStorage.setItem('sf_token', token);
+    localStorage.setItem('sf_user', JSON.stringify(currentUser));
+    renderUserNav();
+    toast(`Welcome, ${currentUser.full_name}!`);
+    go('dashboard');
+  } catch(e) {
+    toast(e.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = authMode==='register' ? 'Create Account ↗' : 'Sign In ↗';
+  }
+}
+
+function renderUserNav() {
+  const nr = $('navRight');
+  if (!currentUser) return;
+  nr.innerHTML = `
+    <span class="badge-beta">BETA</span>
+    <span id="apiStatus"></span>
+    <div class="user-chip" onclick="signOut()">
+      <div class="uc-dot"></div>
+      <span class="uc-name">${currentUser.full_name}</span>
+      <span style="font-size:11px;color:var(--muted)">↩</span>
+    </div>
+    <button class="btn primary sm" onclick="go('register-farm')">+ Farm</button>`;
+  checkApiStatus();
+}
+
+function signOut() {
+  token = null; currentUser = null; myFarms = [];
+  localStorage.removeItem('sf_token');
+  localStorage.removeItem('sf_user');
+  location.reload();
+}
+
+// ── API STATUS ─────────────────────────────────────────────────────────────
+async function checkApiStatus() {
+  try {
+    await fetch(API);
+    const el = $('apiStatus');
+    if(el) el.innerHTML = `<span class="api-dot online" title="API Online"></span>`;
+  } catch {
+    const el = $('apiStatus');
+    if(el) el.innerHTML = `<span class="api-dot offline" title="API Offline"></span>`;
+  }
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  if (!currentUser) return;
+  try {
+    const me = await apiFetch('/auth/me');
+    myFarms = me.farms || [];
+    $('dFarms').textContent = myFarms.length;
+    $('bFarms').innerHTML = miniBarHtml(rndBars());
+    $('bUploads').innerHTML = miniBarHtml(rndBars(), 'var(--amber)');
+    $('dUploads').textContent = '—';
+    $('dPG').textContent = '—';
+    $('dMongo').textContent = '—';
+
+    // Farms table
+    const tbody = $('dashFarmsBody');
+    if (!myFarms.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">No farms yet — <span style="color:var(--green);cursor:pointer" onclick="go('register-farm')">register one</span></td></tr>`;
+    } else {
+      tbody.innerHTML = myFarms.map(f=>`
+        <tr>
+          <td class="mono">${f.farm_code}</td>
+          <td>${f.name}</td>
+          <td>—</td>
+          <td>${f.primary_crop||'—'}</td>
+          <td>${f.size_hectares||'—'}</td>
+          <td><span class="pill ${f.is_active?'active':'inactive'}">${f.is_active?'Active':'Inactive'}</span></td>
+        </tr>`).join('');
+    }
+
+    // Upload log per first farm
+    if (myFarms.length) {
+      try {
+        const data = await apiFetch(`/data/${myFarms[0].id}`);
+        const logs = data.upload_log || [];
+        $('dUploads').textContent = logs.length;
+        const pgCount = logs.filter(l=>l.db_tier==='postgres').length;
+        const mgCount = logs.filter(l=>l.db_tier==='mongodb').length;
+        $('dPG').textContent = pgCount;
+        $('dMongo').textContent = mgCount;
+        const lb = $('uploadLogBody');
+        if(!logs.length) {
+          lb.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">No uploads yet</td></tr>`;
+        } else {
+          lb.innerHTML = logs.map(l=>`
+            <tr>
+              <td class="mono">${myFarms.find(f=>f.id===l.farm_id)?.farm_code||l.farm_id?.slice(0,8)}</td>
+              <td>${l.data_category}</td>
+              <td><span class="pill ${l.db_tier}">${l.db_tier}</span></td>
+              <td style="color:var(--muted)">${l.file_name||'JSON data'}</td>
+              <td><span class="pill ${l.status==='processed'?'active':l.status==='failed'?'failed':'pending'}">${l.status}</span></td>
+              <td style="color:var(--muted)">${timeAgo(l.uploaded_at)}</td>
+            </tr>`).join('');
+        }
+      } catch {}
+    }
+  } catch(e) {
+    toast(e.message, 'error');
+  }
+}
+
+// ── FARMS ──────────────────────────────────────────────────────────────────
+async function loadFarms() {
+  try {
+    const data = await apiFetch('/farms?limit=50');
+    const farms = data.farms || [];
+    $('mapCount').textContent = `${farms.length} active farm nodes`;
+
+    // Dots on map (randomised positions within the box)
+    const mapDots = $('mapDots');
+    mapDots.innerHTML = farms.map((f,i)=>{
+      const top = 15 + (i * 7 + Math.sin(i*1.3)*20) % 65;
+      const left = 10 + (i * 11 + Math.cos(i*1.7)*25) % 78;
+      return `<div class="map-dot" style="top:${top}%;left:${left}%" onclick="highlightFarm('${f.id}')">
+        <div class="dot"></div>
+        <div class="pulse"></div>
+        <div class="dot-label">${f.farm_code}</div>
+      </div>`;
+    }).join('');
+
+    // Farm panel list
+    $('farmPanel').innerHTML = farms.length ? farms.map(f=>`
+      <div class="farm-item" id="fi-${f.id}" onclick="highlightFarm('${f.id}')">
+        <div class="fi-name">${f.name}</div>
+        <div class="fi-loc">📍 ${f.enclave_name||'—'}</div>
+        <div class="fi-meta">
+          <span class="pill ${f.is_active?'active':'inactive'}">${f.is_active?'Active':'Inactive'}</span>
+          <span style="font-size:11px;color:var(--muted)">${f.primary_crop||'—'}</span>
+          ${f.size_hectares?`<span style="font-size:11px;color:var(--muted)">${f.size_hectares} ha</span>`:''}
+        </div>
+      </div>`).join('')
+    : `<div style="color:var(--muted);font-size:13px;padding:.5rem">No farms found. <span style="color:var(--green);cursor:pointer" onclick="go('register-farm')">Register one →</span></div>`;
+  } catch(e) {
+    $('farmPanel').innerHTML = `<div style="color:var(--danger);font-size:13px;padding:.5rem">Could not load farms: ${e.message}</div>`;
+  }
+}
+
+function highlightFarm(id) {
+  document.querySelectorAll('.farm-item').forEach(el=>el.classList.remove('active'));
+  const el = $('fi-'+id);
+  if(el){ el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+}
+
+// ── REGISTER FARM ──────────────────────────────────────────────────────────
+async function submitRegisterFarm() {
+  if (!currentUser) { toast('Please sign in first', 'error'); go('auth'); return; }
+  const name = $('rfName').value.trim();
+  if (!name) { toast('Farm name is required', 'error'); return; }
+  const btn = $('rfBtn');
+  btn.disabled = true; btn.innerHTML = `<div class="spinner"></div> Registering...`;
+  try {
+    const data = await apiFetch('/farms', {
+      method:'POST',
+      body: JSON.stringify({
+        name,
+        enclave_id: $('rfEnclave').value || null,
+        lga: $('rfLga').value.trim() || null,
+        primary_crop: $('rfCrop').value || null,
+        size_hectares: parseFloat($('rfSize').value) || null,
+        address: $('rfAddress').value.trim() || null,
+      })
+    });
+    toast(`Farm registered! ID: ${data.farm.farm_code}`);
+    $('rfName').value=''; $('rfLga').value=''; $('rfAddress').value=''; $('rfSize').value='';
+    go('farms');
+  } catch(e) {
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled=false; btn.innerHTML='Register Farm ↗';
+  }
+}
+
+// ── UPLOAD DATA ─────────────────────────────────────────────────────────────
+async function loadUploadFarmSelect() {
+  if (!currentUser) return;
+  try {
+    const data = await apiFetch('/farms?limit=100');
+    const sel = $('ulFarm');
+    sel.innerHTML = '<option value="">Select farm...</option>' +
+      (data.farms||[]).map(f=>`<option value="${f.id}">${f.farm_code} — ${f.name}</option>`).join('');
+  } catch {}
+}
+
+function updateDbTierBadge() {
+  const cat = $('ulCategory').value;
+  const box = $('tierBadge');
+  const structured = ['crop_yield','financial'];
+  if (!cat) { box.style.display='none'; return; }
+  box.style.display='block';
+  if (structured.includes(cat)) {
+    box.style.background='rgba(75,158,255,.1)'; box.style.color='var(--blue)';
+    box.textContent='→ Will be stored in PostgreSQL (structured data tier)';
+  } else {
+    box.style.background='rgba(166,255,20,.08)'; box.style.color='var(--green)';
+    box.textContent='→ Will be stored in MongoDB (unstructured data tier)';
+  }
+}
+
+function handleFileSelect(input) {
+  if (input.files[0]) setFile(input.files[0]);
+}
+function handleDrop(e) {
+  e.preventDefault();
+  $('uploadZone').classList.remove('drag');
+  if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+}
+function setFile(f) {
+  selectedFile = f;
+  const box = $('fileSelectedBox');
+  box.style.display='flex';
+  box.className='file-selected';
+  box.innerHTML=`<span>📄 ${f.name} <span style="color:var(--muted)">(${(f.size/1024/1024).toFixed(2)} MB)</span></span><span style="cursor:pointer;color:var(--danger)" onclick="clearFile()">✕</span>`;
+}
+function clearFile() {
+  selectedFile = null;
+  $('fileSelectedBox').style.display='none';
+  $('fileInput').value='';
+}
+
+async function submitUpload() {
+  if (!currentUser) { toast('Please sign in first', 'error'); go('auth'); return; }
+  const farm_id = $('ulFarm').value;
+  const cat = $('ulCategory').value;
+  if (!farm_id) { toast('Select a farm', 'error'); return; }
+  if (!cat) { toast('Select a data category', 'error'); return; }
+
+  const btn = $('ulBtn');
+  btn.disabled=true; btn.innerHTML=`<div class="spinner"></div> Uploading...`;
+
+  try {
+    const fd = new FormData();
+    fd.append('farm_id', farm_id);
+    fd.append('data_category', cat);
+    fd.append('season', $('ulSeason').value.trim());
+    fd.append('notes', $('ulNotes').value.trim());
+    const d = $('ulData').value.trim();
+    if (d) fd.append('data', d);
+    if (selectedFile) fd.append('file', selectedFile);
+
+    const res = await apiFetchForm('/data/upload', fd);
+    toast(`Uploaded to ${res.db_tier === 'postgres' ? 'PostgreSQL' : 'MongoDB'}!`);
+    clearFile();
+    $('ulSeason').value=''; $('ulNotes').value=''; $('ulData').value='';
+  } catch(e) {
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled=false; btn.innerHTML='Submit to Repository ↗';
+  }
+}
+
+// ── ANALYTICS ──────────────────────────────────────────────────────────────
+function renderAnalyticsForm() {
+  const type = $('analyticsType').value;
+  const pb = $('analyticsParamBox');
+  if (type==='enclave') {
+    pb.innerHTML=`<div class="form-group" style="margin:0"><label>State</label><select id="aEnclaveId"><option value="1">Edo State</option><option value="2">Kano State</option><option value="3">Delta State</option><option value="4">Plateau State</option><option value="5">Ogun State</option><option value="6">Benue State</option></select></div>`;
+  } else if (type==='farm') {
+    pb.innerHTML=`<div class="form-group" style="margin:0"><label>Farm ID / Code</label><input id="aFarmId" placeholder="Farm UUID or FRM-XXXX"/></div>`;
+  } else {
+    pb.innerHTML='';
+  }
+}
+
+async function runAnalytics() {
+  if (!currentUser) { toast('Sign in to run analytics', 'error'); go('auth'); return; }
+  const type = $('analyticsType').value;
+  const res = $('analyticsResult');
+  res.innerHTML=`<div style="color:var(--muted);font-size:13px;padding:1rem">Loading...</div>`;
+
+  try {
+    let data;
+    if (type==='national') {
+      data = await apiFetch('/analytics/national');
+      res.innerHTML = renderNational(data);
+    } else if (type==='enclave') {
+      const eid = $('aEnclaveId').value;
+      data = await apiFetch(`/analytics/enclave/${eid}`);
+      res.innerHTML = renderEnclave(data);
+    } else {
+      const fid = $('aFarmId').value.trim();
+      if(!fid){toast('Enter a Farm ID','error');res.innerHTML='';return;}
+      data = await apiFetch(`/analytics/farm/${fid}`);
+      res.innerHTML = renderFarmAnalytics(data);
+    }
+  } catch(e) {
+    res.innerHTML=`<div style="color:var(--danger);padding:1rem">Error: ${e.message}</div>`;
+  }
+}
+
+function renderNational(data) {
+  const enclaves = data.enclaves || [];
+  const crops = data.national_yield || [];
+  const tiers = data.polyglot_storage || [];
+  return `
+    <div class="analytics-grid">
+      <div class="analytic-card">
+        <h4>Farms by State</h4>
+        ${enclaves.map(e=>`<div class="data-row"><span class="key">${e.enclave}</span><span class="val">${e.farms} farms</span></div>`).join('')||'<p style="color:var(--muted);font-size:13px">No data</p>'}
+      </div>
+      <div class="analytic-card">
+        <h4>Top Crops (National)</h4>
+        ${crops.map(c=>`<div class="data-row"><span class="key">${c.crop_name}</span><span class="val">${c.total_yield_tonnes||0}t</span></div>`).join('')||'<p style="color:var(--muted);font-size:13px">No yield records yet</p>'}
+      </div>
+      <div class="analytic-card">
+        <h4>Polyglot Storage Split</h4>
+        ${tiers.map(t=>`<div class="data-row"><span class="key"><span class="pill ${t.db_tier}">${t.db_tier}</span></span><span class="val">${t.uploads} uploads</span></div>`).join('')||'<p style="color:var(--muted);font-size:13px">No uploads yet</p>'}
+      </div>
+    </div>`;
+}
+
+function renderEnclave(data) {
+  const fs = data.farm_statistics||{};
+  const crops = data.top_crops||[];
+  return `
+    <div class="analytics-grid">
+      <div class="analytic-card">
+        <h4>${(data.enclave||{}).name||'Enclave'} Overview</h4>
+        <div class="data-row"><span class="key">Total Farms</span><span class="val">${fs.total_farms||0}</span></div>
+        <div class="data-row"><span class="key">Total Area</span><span class="val">${fs.total_ha||0} ha</span></div>
+        <div class="data-row"><span class="key">Crop Varieties</span><span class="val">${fs.crop_diversity||0}</span></div>
+      </div>
+      <div class="analytic-card">
+        <h4>Top Crops by Yield</h4>
+        ${crops.map(c=>`<div class="data-row"><span class="key">${c.crop_name}</span><span class="val">${c.total_yield_kg||0} kg</span></div>`).join('')||'<p style="color:var(--muted);font-size:13px">No yield records yet</p>'}
+      </div>
+    </div>`;
+}
+
+function renderFarmAnalytics(data) {
+  const health = data.financial_health||{};
+  const yields = data.yield_trend||[];
+  return `
+    <div class="analytics-grid">
+      <div class="analytic-card">
+        <h4>Financial Health</h4>
+        <div class="data-row"><span class="key">Total Revenue</span><span class="val">₦${Number(health.total_revenue||0).toLocaleString()}</span></div>
+        <div class="data-row"><span class="key">Total Expenses</span><span class="val">₦${Number(health.total_expense||0).toLocaleString()}</span></div>
+        <div class="data-row"><span class="key">Net Profit</span><span class="val" style="color:var(--green)">₦${Number(health.net_profit_ngn||0).toLocaleString()}</span></div>
+        <div class="data-row"><span class="key">Margin</span><span class="val">${health.profit_margin_pct||0}%</span></div>
+      </div>
+      <div class="analytic-card">
+        <h4>Yield Trend</h4>
+        ${yields.length ? yields.slice(0,6).map(y=>`<div class="data-row"><span class="key">${y.crop_name} ${y.year||''}</span><span class="val">${y.yield_kg} kg</span></div>`).join('')
+        : '<p style="color:var(--muted);font-size:13px">No yield records yet</p>'}
+      </div>
+    </div>`;
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (currentUser) renderUserNav();
+  checkApiStatus();
+  // Hero stats
+  try {
+    apiFetch('/farms?limit=1').then(d=>{
+      if(d.total) { $('hsFarms').textContent = d.total.toLocaleString()+'+'; }
+    }).catch(()=>{});
+  } catch {}
+});
+</script>
+</body>
+</html>
