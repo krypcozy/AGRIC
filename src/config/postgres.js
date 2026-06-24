@@ -2,8 +2,9 @@
 // Handles the relational (structured) side of the polyglot persistence model.
 // Stores: farms, users, stakeholders, crop yield records, financial records.
 
+const path = require('path');
 const { Pool } = require('pg');
-require('dotenv').config();
+require('dotenv').config({ path: path.resolve(__dirname, '..', '..', '.env') });
 
 const requiredEnv = ['PG_HOST', 'PG_PORT', 'PG_DATABASE', 'PG_USER', 'PG_PASSWORD'];
 const missingEnv = requiredEnv.filter((key) => !process.env[key]);

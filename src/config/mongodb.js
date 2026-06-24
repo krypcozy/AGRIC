@@ -3,8 +3,9 @@
 // Stores: soil sensor logs, weather data, satellite imagery metadata,
 //         farm activity notes, IoT streams — anything schema-flexible.
 
+const path = require('path');
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config({ path: path.resolve(__dirname, '..', '..', '.env') });
 
 const connectMongo = async () => {
   const uri = process.env.MONGO_URI;

@@ -2,7 +2,8 @@
 // SmartFarm Repository — Polyglot Persistence Backend
 // Express server wiring together PostgreSQL (structured) + MongoDB (unstructured)
 
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -16,6 +17,9 @@ const dataRoutes      = require('./routes/dataRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 
 const app = express();
+
+// Serve static website files from the project root
+app.use(express.static(path.join(__dirname, '..')));
 
 // ── Middleware ──────────────────────────────────────────────────────────────
 app.use(cors());
@@ -61,7 +65,25 @@ app.use((err, req, res, next) => {
 });
 
 // ── Start ───────────────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 5000;
+const DEFAULT_PORT = Number(process.env.PORT || 5000);
+
+const startServer = (port, attempt = 1) => {
+  const server = app.listen(port, () => {
+    console.log(`\n🌱 SmartFarm API running on http://localhost:${port}/api`);
+    console.log(`   Persistence: PostgreSQL (structured) + MongoDB (unstructured)\n`);
+  });
+
+  server.on('error', (err) => {
+    if (err && err.code === 'EADDRINUSE' && attempt < 5) {
+      const nextPort = port + 1;
+      console.warn(`[Server] Port ${port} is already in use. Trying ${nextPort} instead.`);
+      server.close(() => startServer(nextPort, attempt + 1));
+    } else {
+      console.error('[Server] Failed to start:', err && err.message ? err.message : err);
+      process.exit(1);
+    }
+  });
+};
 
 const start = async () => {
   await connectMongo();
@@ -76,10 +98,8 @@ const start = async () => {
     }
     process.exit(1);
   }
-  app.listen(PORT, () => {
-    console.log(`\n🌱 SmartFarm API running on http://localhost:${PORT}/api`);
-    console.log(`   Persistence: PostgreSQL (structured) + MongoDB (unstructured)\n`);
-  });
+
+  startServer(DEFAULT_PORT);
 };
 
 start();
