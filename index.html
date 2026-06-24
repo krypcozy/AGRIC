@@ -633,7 +633,17 @@
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────────────────────
-const API = 'http://localhost:5000/api';
+const API = (() => {
+  const params = new URLSearchParams(window.location.search);
+  const fromQuery = params.get('api');
+  const fromGlobal = window.__SMARTFARM_API_URL__;
+  if (fromQuery) return fromQuery.replace(/\/$/, '');
+  if (fromGlobal) return fromGlobal.replace(/\/$/, '');
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:5000/api';
+  }
+  return '/api';
+})();
 let token = localStorage.getItem('sf_token') || null;
 let currentUser = JSON.parse(localStorage.getItem('sf_user') || 'null');
 let myFarms = [];

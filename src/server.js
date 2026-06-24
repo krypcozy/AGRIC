@@ -22,7 +22,8 @@ const app = express();
 app.use(express.static(path.join(__dirname, '..')));
 
 // ── Middleware ──────────────────────────────────────────────────────────────
-app.use(cors());
+app.set('trust proxy', 1);
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));

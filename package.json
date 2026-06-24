@@ -2,6 +2,9 @@
   "name": "smartfarm-repository",
   "version": "1.0.0",
   "description": "Smart Farm Data Repository — Polyglot Persistence Big Data System",
+  "engines": {
+    "node": "22.x"
+  },
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
